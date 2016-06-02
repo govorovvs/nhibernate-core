@@ -889,9 +889,9 @@
     <Compile Include="NHSpecificTest\NH3634\PersonMapper.cs" />
     <Compile Include="NHSpecificTest\NH3727\Entity.cs" />
     <Compile Include="NHSpecificTest\NH3727\FixtureByCode.cs" />
-    <Compile Include="NHSpecificTest\NH3778\Employee.cs" />
     <Compile Include="NHSpecificTest\NH3778\Fixture.cs" />
-    <Compile Include="NHSpecificTest\NH3778\Person.cs" />
+    <Compile Include="NHSpecificTest\NH3778\OneToManyDomain.cs" />
+    <Compile Include="NHSpecificTest\NH3778\OneToOneDomain.cs" />
     <Compile Include="NHSpecificTest\NH3795\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH3818\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH3818\MyLovelyCat.cs" />

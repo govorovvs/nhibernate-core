@@ -3,21 +3,35 @@
 				   assembly="NHibernate.Test"
 				   namespace="NHibernate.Test.NHSpecificTest.NH3778">
 
-  <class name="Employee">
+  <class name="EmployeeOneToOne">
 	<id column="Id" name="Id">
 	  <generator class="foreign">
 		<param name="property">Person</param>
 	  </generator>
 	</id>
-	<one-to-one name="Person" class="Person" constrained="true" />
+	<one-to-one name="Person" class="PersonOneToOne" constrained="true" />
   </class>
 
-  <class name="Person">
+  <class name="PersonOneToOne">
 	<id name="Id" type="">
 	  <generator class="assigned" />
 	</id>
 	<property name="Name" />
-	<one-to-one name="Employee" class="Employee" cascade="all-delete-orphan" />
+	<one-to-one name="Employee" class="EmployeeOneToOne" cascade="all-delete-orphan" />
+  </class>
+
+  <class name="EmployeeOneToMany">
+	<id column="Id" name="Id">
+	  <generator class="assigned" />
+	</id>
+	<many-to-one name="Person" column="PersonId" cascade="all-delete-orphan" />
+  </class>
+
+  <class name="PersonOneToMany">
+	<id name="Id" type="">
+	  <generator class="assigned" />
+	</id>
+	<property name="Name" />
   </class>
 
 </hibernate-mapping>

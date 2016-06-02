@@ -17,14 +17,21 @@ namespace NHibernate.Test.NHSpecificTest.NH3778
 			using (ISession session = OpenSession())
 			using (var transaction = session.BeginTransaction())
 			{
-				var person = new Person
-				{
-					Id = 1,
-					Name = "Bob"
-				};
-				person.Employee = new Employee(person);
+				var person = new PersonOneToOne(1, "Bob");
+				person.Employee = new EmployeeOneToOne(person);
 
 				session.SaveOrUpdate(person);
+				transaction.Commit();
+			}
+
+			using (ISession session = OpenSession())
+			using (var transaction = session.BeginTransaction())
+			{
+				var person = new PersonOneToMany(1, "Bob");
+				var employee = new EmployeeOneToMany(2, person);
+
+				session.SaveOrUpdate(person);
+				session.SaveOrUpdate(employee);
 				transaction.Commit();
 			}
 		}
@@ -34,10 +41,29 @@ namespace NHibernate.Test.NHSpecificTest.NH3778
 			using (var session = OpenSession())
 			using (var transaction = session.BeginTransaction())
 			{
-				session.Delete("from Person");
-				session.Delete("from Employee");
+				session.Delete("from PersonOneToOne");
+				session.Delete("from EmployeeOneToOne");
+
+				session.Delete("from PersonOneToMany");
+				session.Delete("from EmployeeOneToMany");
 
 				transaction.Commit();
+			}
+		}
+
+		[Test]
+		public void Performing_A_Linq_Query_On_OneToMany_Mapped_Reference()
+		{
+			using (ISession session = OpenSession())
+			{
+				var person = session.Load<PersonOneToMany>(1);
+
+				var results = session.Query<EmployeeOneToMany>()
+									 .Where(x => x.Person == person)
+									 .Fetch(x => x.Person)
+									 .ToList();
+
+				Assert.That(results.Count, Is.EqualTo(1));
 			}
 		}
 
@@ -46,9 +72,9 @@ namespace NHibernate.Test.NHSpecificTest.NH3778
 		{
 			using (ISession session = OpenSession())
 			{
-				var person = session.Load<Person>(1);
+				var person = session.Load<PersonOneToOne>(1);
 
-				var results = session.Query<Employee>()
+				var results = session.Query<EmployeeOneToOne>()
 									 .Where(x => x.Person == person)
 									 .Fetch(x => x.Person)
 									 .ToList();
