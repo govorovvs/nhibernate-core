@@ -13,8 +13,6 @@ namespace NHibernate.Type
 	[Serializable]
 	public class OneToOneType : EntityType, IAssociationType
 	{
-		private static readonly SqlType[] NoSqlTypes = new SqlType[0];
-
 		private readonly ForeignKeyDirection foreignKeyDirection;
 		private readonly string propertyName;
 		private readonly string entityName;
@@ -26,7 +24,7 @@ namespace NHibernate.Type
 
 		public override SqlType[] SqlTypes(IMapping session)
 		{
-			return NoSqlTypes;
+			return GetIdentifierOrUniqueKeyType(session).SqlTypes(session);
 		}
 
 		public OneToOneType(string referencedEntityName, ForeignKeyDirection foreignKeyType, string uniqueKeyPropertyName, bool lazy, bool unwrapProxy, bool isEmbeddedInXML, string entityName, string propertyName)
@@ -39,12 +37,13 @@ namespace NHibernate.Type
 
 		public override void NullSafeSet(IDbCommand st, object value, int index, bool[] settable, ISessionImplementor session)
 		{
-			//nothing to do
+			//nothing to do, because one-to-one reference should not be set in entity persistance scenario
 		}
 
 		public override void NullSafeSet(IDbCommand cmd, object value, int index, ISessionImplementor session)
 		{
-			//nothing to do
+			var type = GetIdentifierOrUniqueKeyType(session.Factory);
+			type.NullSafeSet(cmd, GetReferenceValue(value, session), index, session);
 		}
 
 		public override bool IsOneToOne
